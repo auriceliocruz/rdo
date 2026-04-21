@@ -250,6 +250,9 @@
                 padding: 10px 12px;
                 font-size: 14px;
             }
+            small {
+                font-size: 11px;
+            }
         }
     </style>
 </head>
@@ -266,10 +269,11 @@
                 </div>
                 <div class="form-group">
                     <label for="local">📍 Local:</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="local" style="flex: 1;">
-                        <button type="button" onclick="getGPSLocation()" style="padding: 12px 16px; background-color: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer;">GPS</button>
+                    <div style="display: flex; gap: 8px; align-items: stretch;">
+                        <input type="text" id="local" placeholder="Digite o endereço ou use GPS" style="flex: 1;">
+                        <button type="button" onclick="getGPSLocation()" style="padding: 12px 16px; background-color: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer; white-space: nowrap;">📍 GPS</button>
                     </div>
+                    <small style="color: #666; font-size: 12px; margin-top: 4px; display: block;">Digite o local manualmente ou clique em GPS para obter automaticamente</small>
                 </div>
                 <div class="form-group">
                     <label for="data">📅 Data:</label>
