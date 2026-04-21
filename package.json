@@ -1,0 +1,12 @@
+{
+  "name": "rdo-sistema",
+  "version": "1.0.0",
+  "description": "Sistema web para Relatório Diário de Obra",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
