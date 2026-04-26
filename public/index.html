@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Sistema Profissional para Relatórios Diários de Obra">
+    <link rel="manifest" href="/manifest.json">
+    <title>RDO - Relatório Diário de Obra</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/style.css">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- PDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i data-lucide="clipboard-check"></i> RDO - RELATÓRIO DIÁRIO</h1>
+            <p style="color: var(--text-light); margin-top: 8px;">Controle e registro de atividades em campo</p>
+        </header>
+        
+        <form id="rdo-form" onsubmit="event.preventDefault();">
+            <!-- Dados Gerais -->
+            <div class="section">
+                <h2><i data-lucide="info"></i> Dados Gerais</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="obra">📍 Obra</label>
+                        <input type="text" id="obra" placeholder="Nome do projeto">
+                    </div>
+                    <div class="form-group">
+                        <label for="local">📍 Local</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="local" placeholder="Endereço ou coordenadas" style="flex: 1;">
+                            <button type="button" class="btn-secondary" onclick="getGPSLocation()" title="Obter GPS" style="padding: 8px 12px;">
+                                <i data-lucide="map-pin"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="data">📅 Data</label>
+                        <input type="date" id="data">
+                    </div>
+                    <div class="form-group">
+                        <label for="clima">🌤️ Clima</label>
+                        <input type="text" id="clima" placeholder="Ex: Ensolarado, Chuvoso">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="obs">📝 Observações / Diário</label>
+                        <textarea id="obs" rows="4" placeholder="Descreva as atividades do dia..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Equipe -->
+            <div class="section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin-bottom: 0; border-bottom: none;"><i data-lucide="users"></i> Equipe</h2>
+                    <button type="button" class="btn-primary" onclick="addEquipeMember()" style="padding: 8px 16px; font-size: 0.875rem;">
+                        <i data-lucide="plus"></i> Adicionar
+                    </button>
+                </div>
+                <div id="equipe-list" class="equipe-list">
+                    <!-- Membros da equipe serão inseridos aqui -->
+                </div>
+            </div>
+
+            <!-- Qualidade -->
+            <div class="section">
+                <h2><i data-lucide="shield-check"></i> Controle de Qualidade</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="qualidade-local">Local de Inspeção</label>
+                        <input type="text" id="qualidade-local" placeholder="Ex: Bloco A">
+                    </div>
+                    <div class="form-group">
+                        <label for="lixa-escova">Lixa / Escova</label>
+                        <input type="number" id="lixa-escova" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="galvanizado">Galvanizado</label>
+                        <input type="number" id="galvanizado" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="torque-lacre">Torque e Lacre</label>
+                        <input type="number" id="torque-lacre" value="0">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="twitter">Notas Adicionais (Qualidade)</label>
+                        <input type="text" id="twitter" placeholder="Observações específicas de qualidade">
+                    </div>
+                </div>
+                
+                <div style="margin-top: 32px;">
+                    <h3 style="font-size: 0.875rem; text-transform: uppercase; color: var(--text-light); margin-bottom: 12px;">Resumo da Inspeção</h3>
+                    <table class="quality-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Valor/Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Local</td>
+                                <td id="display-local">-</td>
+                            </tr>
+                            <tr>
+                                <td>Lixa / Escova</td>
+                                <td id="display-lixa-escova">0</td>
+                            </tr>
+                            <tr>
+                                <td>Galvanizado</td>
+                                <td id="display-galvanizado">0</td>
+                            </tr>
+                            <tr>
+                                <td>Torque e Lacre</td>
+                                <td id="display-torque-lacre">0</td>
+                            </tr>
+                            <tr>
+                                <td>Notas</td>
+                                <td id="display-twitter">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Ações -->
+            <div class="button-group">
+                <button type="button" class="btn-primary" onclick="saveData()">
+                    <i data-lucide="save"></i> Salvar
+                </button>
+                <button type="button" class="btn-secondary" onclick="exportPDF()">
+                    <i data-lucide="file-text"></i> PDF (Gerado)
+                </button>
+                <button type="button" class="btn-secondary" onclick="printReport()">
+                    <i data-lucide="printer"></i> Imprimir
+                </button>
+                <button type="button" class="btn-secondary" onclick="generateTXT()">
+                    <i data-lucide="download"></i> TXT
+                </button>
+                <button type="button" class="btn-secondary" onclick="sendToWhatsApp()" style="background-color: #25d366; color: white; border: none;">
+                    <i data-lucide="message-circle"></i> WhatsApp
+                </button>
+                <button type="button" class="btn-danger" onclick="clearForm()">
+                    <i data-lucide="trash-2"></i> Limpar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
